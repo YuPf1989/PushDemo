@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        release {
+            keyAlias 'key0'
+            keyPassword '123456'
+            storeFile file('E:/my_demo_workspace/PushDemo/release.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.rain.pushdemo"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    productFlavors {
+        // 说明：指定不同的applicationId，即可创建不同包名的应用
+        // 在不同的flavor下可以指定不同的变量值
+        //All flavors must now belong to a named flavor dimension 解决该报错
+        flavorDimensions "versionCode"
+
+        flavor_product {
+            applicationId 'product.test.com.rain.pushdemo'
+            signingConfig signingConfigs.release
+            versionName '1.0-product'
+            buildConfigField "String", "SERVER_HOST", "\"100.100.100.50/\""
+            buildConfigField "String", "BASE_URL", "\"100.100.100.50\""
+            manifestPlaceholders = [
+                    appName: "product-PushDemo",
+            ]
+        }
+
+        flavor_test {
+            signingConfig signingConfigs.release
+            versionCode 1
+            versionName '1.0-test'
+            buildConfigField "String", "SERVER_HOST", "\"300.200.200.50/\""
+            buildConfigField "String", "BASE_URL", "\"300.200.200.50\""
+            applicationId 'test.com.rain.pushdemo'
+            manifestPlaceholders = [
+                    appName: "test-PushDemo",
+            ]
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
